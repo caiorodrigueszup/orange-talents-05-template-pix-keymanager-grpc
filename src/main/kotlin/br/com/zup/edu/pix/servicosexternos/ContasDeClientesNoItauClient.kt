@@ -1,6 +1,7 @@
-package br.com.zup.edu.pix.novachave
+package br.com.zup.edu.pix.servicosexternos
 
 import br.com.zup.edu.TipoConta
+import br.com.zup.edu.pix.novachave.DadosDaContaResponse
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable

@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.novachave
+package br.com.zup.edu.pix.entities
 
 import io.micronaut.core.annotation.Introspected
 import javax.persistence.Column

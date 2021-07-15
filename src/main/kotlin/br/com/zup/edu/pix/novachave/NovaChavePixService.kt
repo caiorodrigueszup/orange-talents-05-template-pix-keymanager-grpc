@@ -1,7 +1,9 @@
 package br.com.zup.edu.pix.novachave
 
-import br.com.zup.edu.pix.compartilhado.grpc.ErrorHandle
 import br.com.zup.edu.pix.compartilhado.grpc.exceptions.ChavePixExistenteException
+import br.com.zup.edu.pix.entities.ChavePix
+import br.com.zup.edu.pix.repositories.ChavePixRepository
+import br.com.zup.edu.pix.servicosexternos.ContasDeClientesNoItauClient
 import io.micronaut.validation.Validated
 import javax.inject.Inject
 import javax.inject.Singleton

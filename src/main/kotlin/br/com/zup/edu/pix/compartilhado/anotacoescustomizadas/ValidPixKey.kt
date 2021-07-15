@@ -1,10 +1,11 @@
 package br.com.zup.edu.pix.compartilhado.anotacoescustomizadas
 
 import br.com.zup.edu.pix.novachave.ChavePixRequest
+import io.micronaut.core.annotation.AnnotationValue
+import io.micronaut.validation.validator.constraints.ConstraintValidator
+import io.micronaut.validation.validator.constraints.ConstraintValidatorContext
 import javax.inject.Singleton
 import javax.validation.Constraint
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
@@ -19,14 +20,15 @@ annotation class ValidPixKey(
 )
 
 @Singleton
-class ValidPixKeyValidator: ConstraintValidator<ValidPixKey, ChavePixRequest> {
+class ValidPixKeyValidator : ConstraintValidator<ValidPixKey, ChavePixRequest> {
     override fun isValid(
         value: ChavePixRequest?,
-        context: ConstraintValidatorContext?
+        annotationMetadata: AnnotationValue<ValidPixKey>,
+        context: ConstraintValidatorContext
     ): Boolean {
-     if (value?.tipo == null) {
-         return false
-     }
+        if (value?.tipo == null) {
+            return false
+        }
         return value.tipo.valida(value.chave)
     }
 }

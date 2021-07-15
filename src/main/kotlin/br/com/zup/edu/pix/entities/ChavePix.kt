@@ -1,6 +1,7 @@
-package br.com.zup.edu.pix.novachave
+package br.com.zup.edu.pix.entities
 
 import br.com.zup.edu.TipoConta
+import br.com.zup.edu.pix.novachave.TipoDeChave
 import java.time.LocalDateTime
 import java.util.*
 import javax.persistence.*
@@ -18,7 +19,7 @@ class ChavePix(
     @field:NotNull
     @field:Enumerated(EnumType.STRING)
     @field:Column(nullable = false)
-    val tipo: TipoChave,
+    val tipo: TipoDeChave,
 
     @field:NotBlank
     @field:Column(nullable = false, unique = true)
