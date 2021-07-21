@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.compartilhado.anotacoescustomizadas
+package br.com.zup.edu.compartilhado.anotacoescustomizadas
 
 import javax.validation.Constraint
 import javax.validation.Payload

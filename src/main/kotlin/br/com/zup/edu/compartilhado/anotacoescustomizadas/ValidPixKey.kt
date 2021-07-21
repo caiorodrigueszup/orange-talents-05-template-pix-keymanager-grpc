@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.compartilhado.anotacoescustomizadas
+package br.com.zup.edu.compartilhado.anotacoescustomizadas
 
 import br.com.zup.edu.pix.novachave.ChavePixRequest
 import io.micronaut.core.annotation.AnnotationValue

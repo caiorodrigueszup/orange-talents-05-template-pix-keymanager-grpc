@@ -1,8 +1,8 @@
-package br.com.zup.edu.pix.compartilhado.grpc.handlers
+package br.com.zup.edu.compartilhado.grpc.handlers
 
-import br.com.zup.edu.pix.compartilhado.grpc.ExceptionHandler
-import br.com.zup.edu.pix.compartilhado.grpc.ExceptionHandler.StatusWithDetails
-import br.com.zup.edu.pix.compartilhado.grpc.exceptions.ChavePixExistenteException
+import br.com.zup.edu.compartilhado.grpc.ExceptionHandler
+import br.com.zup.edu.compartilhado.grpc.ExceptionHandler.StatusWithDetails
+import br.com.zup.edu.compartilhado.grpc.exceptions.ChavePixExistenteException
 import io.grpc.Status
 import javax.inject.Singleton
 

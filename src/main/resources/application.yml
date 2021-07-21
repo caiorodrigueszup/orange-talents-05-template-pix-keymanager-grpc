@@ -1,6 +1,12 @@
 micronaut:
   application:
     name: keyManagerGrpc
+  http:
+    client:
+      logger-name: mylogger
+    services:
+      otherClient:
+        logger-name: other.client
 
 datasources:
   default:
@@ -9,3 +15,8 @@ datasources:
     username: postgres
     password: 'root123'
 jpa.default.properties.hibernate.hbm2ddl.auto: update
+
+bcb:
+  pix:
+    url: 'http://localhost:8082'
+

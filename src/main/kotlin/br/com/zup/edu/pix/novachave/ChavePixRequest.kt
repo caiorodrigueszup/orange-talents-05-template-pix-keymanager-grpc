@@ -1,10 +1,10 @@
 package br.com.zup.edu.pix.novachave
 
 import br.com.zup.edu.TipoConta
-import br.com.zup.edu.pix.compartilhado.anotacoescustomizadas.ValidPixKey
-import br.com.zup.edu.pix.compartilhado.anotacoescustomizadas.ValidUUID
-import br.com.zup.edu.pix.entities.ChavePix
-import br.com.zup.edu.pix.entities.ContaAssociada
+import br.com.zup.edu.compartilhado.anotacoescustomizadas.ValidPixKey
+import br.com.zup.edu.compartilhado.anotacoescustomizadas.ValidUUID
+import br.com.zup.edu.entities.ChavePix
+import br.com.zup.edu.entities.ContaAssociada
 import io.micronaut.core.annotation.Introspected
 import java.util.*
 import javax.validation.constraints.NotBlank
@@ -32,7 +32,7 @@ data class ChavePixRequest(
         return ChavePix(
             idCliente = UUID.fromString(idCliente),
             tipo = TipoDeChave.valueOf(tipo!!.name),
-            chave = if (this.tipo == TipoDeChave.ALEATORIA) UUID.randomUUID().toString() else chave!!,
+            chave = /*if (this.tipo == TipoDeChave.ALEATORIA) UUID.randomUUID().toString() else*/ chave!!,
             tipoConta = TipoConta.valueOf(tipoConta!!.name),
             conta = conta
         )

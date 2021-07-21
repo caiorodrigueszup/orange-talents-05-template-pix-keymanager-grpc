@@ -1,12 +1,12 @@
 package br.com.zup.edu.pix.novachave
 
-import br.com.zup.edu.KeyManagerGrpcServiceGrpc
+import br.com.zup.edu.KeyManagerRegistraGrpcServiceGrpc
 import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.TipoConta
-import br.com.zup.edu.pix.entities.ChavePix
-import br.com.zup.edu.pix.entities.ContaAssociada
-import br.com.zup.edu.pix.repositories.ChavePixRepository
-import br.com.zup.edu.pix.servicosexternos.ContasDeClientesNoItauClient
+import br.com.zup.edu.entities.ChavePix
+import br.com.zup.edu.entities.ContaAssociada
+import br.com.zup.edu.repositories.ChavePixRepository
+import br.com.zup.edu.servicosexternos.*
 import io.grpc.ManagedChannel
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -33,10 +33,13 @@ class CadastrarChaveEndpointTest {
     lateinit var chavePixRepository: ChavePixRepository
 
     @field:Inject
-    lateinit var clientGrpc: KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceBlockingStub
+    lateinit var clientGrpc: KeyManagerRegistraGrpcServiceGrpc.KeyManagerRegistraGrpcServiceBlockingStub
 
     @field:Inject
     lateinit var contasDeClientesNoItauClient: ContasDeClientesNoItauClient
+
+    @field:Inject
+    lateinit var sistemaPixBCBClient: SistemaPixBCBClient
 
     lateinit var registraChavePixRequest: RegistraChavePixRequest
     lateinit var dadosDaContaResponse: DadosDaContaResponse
@@ -91,6 +94,10 @@ class CadastrarChaveEndpointTest {
             )
         ).thenReturn(HttpResponse.ok(dadosDaContaResponse))
 
+        Mockito.`when`(
+            sistemaPixBCBClient.registra(createPixKeyRequest(chavePix))
+        ).thenReturn(HttpResponse.created(createPixKeyResponse(chavePix)))
+
         // acao
         val response = clientGrpc.cadastrar(registraChavePixRequest)
 
@@ -101,6 +108,33 @@ class CadastrarChaveEndpointTest {
             assertNotNull(idPix)
             assertTrue(chavePixRepository.existsByChave("45755411840"))
         }
+    }
+
+    @Test
+    fun `nao deve registrar chave pix quando nao for possivel registrar chave BCB`() {
+        // cenario
+        Mockito.`when`(
+            contasDeClientesNoItauClient.buscarContaPorTipo(
+                id = registraChavePixRequest.idCliente,
+                tipo = registraChavePixRequest.tipoConta
+            )
+        ).thenReturn(HttpResponse.ok(dadosDaContaResponse))
+
+        Mockito.`when`(
+            sistemaPixBCBClient.registra(createPixKeyRequest(chavePix))
+        ).thenReturn(HttpResponse.badRequest())
+        // acao
+
+        val exception = assertThrows<StatusRuntimeException> {
+            clientGrpc.cadastrar(registraChavePixRequest)
+        }
+
+        // validacao
+        with(exception) {
+            assertEquals(Status.FAILED_PRECONDITION.code, status.code)
+            assertEquals("Erro ao cadastrar chave pix no Banco Central do Brasil", status.description)
+        }
+
     }
 
     @Test
@@ -131,10 +165,14 @@ class CadastrarChaveEndpointTest {
             .build()
 
         Mockito.`when`(
-        contasDeClientesNoItauClient.buscarContaPorTipo(
-            registraChavePixRequestAlterada.idCliente,
-            registraChavePixRequestAlterada.tipoConta
-        )).thenReturn(HttpResponse.notFound())
+            contasDeClientesNoItauClient.buscarContaPorTipo(
+                registraChavePixRequestAlterada.idCliente,
+                registraChavePixRequestAlterada.tipoConta
+            )
+        ).thenReturn(HttpResponse.notFound())
+
+        Mockito.`when`(sistemaPixBCBClient.registra(createPixKeyRequest(chavePix)))
+            .thenReturn(HttpResponse.notFound(createPixKeyResponse(chavePix)))
 
         val exception = assertThrows<StatusRuntimeException> {
             clientGrpc.cadastrar(registraChavePixRequestAlterada)
@@ -152,7 +190,7 @@ class CadastrarChaveEndpointTest {
         }
 
         // validacao
-        with(exception){
+        with(exception) {
             assertEquals(Status.INVALID_ARGUMENT.code, status.code)
             assertEquals("Dados inválidos", status.description)
         }
@@ -163,11 +201,54 @@ class CadastrarChaveEndpointTest {
         return Mockito.mock(ContasDeClientesNoItauClient::class.java)
     }
 
+    @MockBean(SistemaPixBCBClient::class)
+    fun mockBCB(): SistemaPixBCBClient {
+        return Mockito.mock(SistemaPixBCBClient::class.java)
+    }
+
     @Factory
     class Clients {
         @Singleton
-        fun criarStubClient(@GrpcChannel(GrpcServerChannel.NAME) channel: ManagedChannel): KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceBlockingStub {
-            return KeyManagerGrpcServiceGrpc.newBlockingStub(channel)
+        fun criarStubClient(@GrpcChannel(GrpcServerChannel.NAME) channel: ManagedChannel):
+                KeyManagerRegistraGrpcServiceGrpc.KeyManagerRegistraGrpcServiceBlockingStub {
+            return KeyManagerRegistraGrpcServiceGrpc.newBlockingStub(channel)
         }
     }
+}
+
+fun createPixKeyRequest(chavePix: ChavePix): CreatePixKeyRequest {
+    return CreatePixKeyRequest(
+        keyType = KeyType.CPF,
+        key = chavePix.chave,
+        bankAccount = BankAccount(
+            participant = ContaAssociada.ITAU_UNIBANCO_ISPB,
+            branch = chavePix.conta.agencia,
+            accountNumber = chavePix.conta.numeroDaConta,
+            accountType = AccountType.CACC
+        ),
+        owner = Owner(
+            type = TypeRequest.NATURAL_PERSON,
+            name = chavePix.conta.nomeDoTitular,
+            taxIdNumber = chavePix.conta.cpfDoTitular
+        )
+    )
+}
+
+fun createPixKeyResponse(chavePix: ChavePix): CreatePixKeyResponse {
+    return CreatePixKeyResponse(
+        keyType = KeyType.CPF,
+        key = chavePix.chave,
+        bankAccount = BankAccount(
+            participant = ContaAssociada.ITAU_UNIBANCO_ISPB,
+            branch = chavePix.conta.agencia,
+            accountNumber = chavePix.conta.numeroDaConta,
+            accountType = AccountType.CACC
+        ),
+        owner = Owner(
+            type = TypeRequest.NATURAL_PERSON,
+            name = chavePix.conta.nomeDoTitular,
+            taxIdNumber = chavePix.conta.cpfDoTitular
+        ),
+        createdAt = ""
+    )
 }

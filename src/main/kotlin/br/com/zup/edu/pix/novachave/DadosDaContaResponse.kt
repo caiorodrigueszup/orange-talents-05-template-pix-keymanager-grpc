@@ -1,6 +1,6 @@
 package br.com.zup.edu.pix.novachave
 
-import br.com.zup.edu.pix.entities.ContaAssociada
+import br.com.zup.edu.entities.ContaAssociada
 
 data class DadosDaContaResponse(
     val tipo: String,

@@ -1,9 +1,9 @@
 package br.com.zup.edu.pix.novachave
 
-import br.com.zup.edu.KeyManagerGrpcServiceGrpc
+import br.com.zup.edu.KeyManagerRegistraGrpcServiceGrpc
 import br.com.zup.edu.RegistraChavePixRequest
 import br.com.zup.edu.RegistraChavePixResponse
-import br.com.zup.edu.pix.compartilhado.grpc.ErrorHandle
+import br.com.zup.edu.compartilhado.grpc.ErrorHandle
 import io.grpc.stub.StreamObserver
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 @Singleton
 class CadastrarChaveEndpoint(
     @Inject val novaChavePixService: NovaChavePixService,
-) : KeyManagerGrpcServiceGrpc.KeyManagerGrpcServiceImplBase() {
+) : KeyManagerRegistraGrpcServiceGrpc.KeyManagerRegistraGrpcServiceImplBase() {
 
     override fun cadastrar(
         request: RegistraChavePixRequest,

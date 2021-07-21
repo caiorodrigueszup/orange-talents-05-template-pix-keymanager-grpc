@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.servicosexternos
+package br.com.zup.edu.servicosexternos
 
 import br.com.zup.edu.TipoConta
 import br.com.zup.edu.pix.novachave.DadosDaContaResponse
@@ -14,3 +14,4 @@ interface ContasDeClientesNoItauClient {
     @Get("/clientes/{id}/contas{?tipo}")
     fun buscarContaPorTipo(@PathVariable id: String, @QueryValue tipo: TipoConta): HttpResponse<DadosDaContaResponse>
 }
+

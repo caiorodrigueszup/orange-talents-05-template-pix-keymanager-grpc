@@ -1,6 +1,6 @@
-package br.com.zup.edu.pix.compartilhado.grpc.handlers
+package br.com.zup.edu.compartilhado.grpc.handlers
 
-import br.com.zup.edu.pix.compartilhado.grpc.ExceptionHandler
+import br.com.zup.edu.compartilhado.grpc.ExceptionHandler
 import io.grpc.Status
 
 /**

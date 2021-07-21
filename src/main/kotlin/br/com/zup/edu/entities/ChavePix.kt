@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.entities
+package br.com.zup.edu.entities
 
 import br.com.zup.edu.TipoConta
 import br.com.zup.edu.pix.novachave.TipoDeChave
@@ -21,9 +21,9 @@ class ChavePix(
     @field:Column(nullable = false)
     val tipo: TipoDeChave,
 
-    @field:NotBlank
+//    @field:NotBlank
     @field:Column(nullable = false, unique = true)
-    val chave: String,
+    var chave: String,
 
     @field:NotNull
     @field:Enumerated(EnumType.STRING)
@@ -43,6 +43,19 @@ class ChavePix(
 
     @Column(nullable = false)
     val criadoEm: LocalDateTime = LocalDateTime.now()
+
+    @Column(nullable = false)
+    var valida: Boolean = false
+
+    val ehValida: Boolean get() = valida
+
+    fun pertenceAo(idCliente: UUID): Boolean {
+        return this.idCliente == idCliente
+    }
+
+    fun atualiza(chave: String) {
+        this.chave = chave
+    }
 
     override fun toString(): String {
         return "ChavePix(idCliente=$idCliente, tipoChave=$tipo, valorChave='$chave', tipoConta=$tipoConta, id=$id, criadoEm=$criadoEm)"

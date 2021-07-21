@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.entities
+package br.com.zup.edu.entities
 
 import io.micronaut.core.annotation.Introspected
 import javax.persistence.Column
@@ -30,4 +30,7 @@ class ContaAssociada(
     val instituicao: String
 ) {
 
+    companion object {
+        public val ITAU_UNIBANCO_ISPB: String = "60701190"
+    }
 }

@@ -1,4 +1,4 @@
-package br.com.zup.edu.pix.compartilhado.grpc
+package br.com.zup.edu.compartilhado.grpc
 
 import io.micronaut.aop.Around
 import io.micronaut.context.annotation.Type
